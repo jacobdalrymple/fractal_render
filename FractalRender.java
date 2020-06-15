@@ -58,8 +58,15 @@ public class FractalRender extends JFrame {
                     glEventListener.zoomOut();
             }
         });
+        
+        JLayeredPane layeredPane = new JLayeredPane();
+        configFractalOptionToolbar();
+        canvas.setBounds(0, 0, WIDTH, HEIGHT);
+        fractalOptions.setBounds(WIDTH - 193, 0, 189, 198);
 
-        getContentPane().add(canvas, BorderLayout.CENTER);
+        layeredPane.add(fractalOptions);
+        layeredPane.add(canvas);
+        getContentPane().add(layeredPane);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
                 animator.stop();
@@ -72,10 +79,112 @@ public class FractalRender extends JFrame {
         animator.start();
     }
 
+
+    /**
+     * Method configures the UI elements of the toolbar used to changed the options
+     * for rendering the fractal.
+     */
+    public void configFractalOptionToolbar() {
+
+        fractalOptions           = new JPanel();
+        fractalColourLabel       = new JLabel();
+        fractalColouringComboBox = new JComboBox<>();
+        iterationNumLabel        = new JLabel();
+        iterationTextField       = new JTextField();
+        iterationSlider          = new JSlider();
+        fractalPowerTextField    = new JTextField();
+        fractalPowerSlider       = new JSlider();
+        fractalPowerLabel        = new JLabel();
+        
+        fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)),
+                "Options for rendering fractal", 
+                javax.swing.border.TitledBorder.CENTER, 
+                javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12))); // NOI18N
+
+        fractalColourLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        fractalColourLabel.setText("Fractal colouring");
+
+        fractalColouringComboBox.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        fractalColouringComboBox.setModel(
+                new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        iterationNumLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        iterationNumLabel.setText("Number of iterations");
+
+        iterationTextField.setText("500");
+
+        fractalPowerTextField.setText("500");
+
+        fractalPowerLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        fractalPowerLabel.setText("Power of fractal");
+
+        javax.swing.GroupLayout fractalOptionsLayout = new javax.swing.GroupLayout(fractalOptions);
+        fractalOptions.setLayout(fractalOptionsLayout);
+        fractalOptionsLayout.setHorizontalGroup(fractalOptionsLayout
+                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(fractalOptionsLayout.createSequentialGroup().addContainerGap().addGroup(fractalOptionsLayout
+                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(fractalOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(fractalColouringComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 157,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(fractalColourLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(iterationNumLabel)
+                        .addGroup(fractalOptionsLayout.createSequentialGroup()
+                                .addComponent(iterationTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(iterationSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 126,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(fractalOptionsLayout.createSequentialGroup()
+                                .addComponent(fractalPowerTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fractalPowerSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 126,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(fractalPowerLabel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+        fractalOptionsLayout.setVerticalGroup(fractalOptionsLayout
+                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(fractalOptionsLayout.createSequentialGroup().addContainerGap()
+                        .addComponent(fractalColourLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fractalColouringComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(iterationNumLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(fractalOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(iterationTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(iterationSlider, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fractalPowerLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(fractalOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(fractalPowerTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(fractalPowerSlider, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+    }
+
     public static void main(String[] args) {
         FractalRender f = new FractalRender("Fractal Render");
         f.getContentPane().setPreferredSize(dimension);
         f.pack();
         f.setVisible(true);
     }
+
+    private JPanel fractalOptions;
+    private JLabel fractalColourLabel;
+    private JComboBox<String> fractalColouringComboBox;
+    private JLabel fractalPowerLabel;
+    private JSlider fractalPowerSlider;
+    private JTextField fractalPowerTextField;
+    private JLabel iterationNumLabel;
+    private JSlider iterationSlider;
+    private JTextField iterationTextField;
+
 }
