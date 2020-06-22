@@ -3,6 +3,7 @@ in vec2 st;
 
 uniform vec3 zoomInfo;
 uniform float fractalPower;
+uniform float iterationNum;
 
 out vec4 fragColor;
 
@@ -13,9 +14,8 @@ void main () {
     vec2 coords = (st - vec2(0.5f))*(zoomInfo.z) - offset;
 
     vec2 z = vec2(0.0f);
-    int limit = 500;
 
-    for (int i = 0; i < 500; i++) {
+    for (float i = 0; i < iterationNum; i++) {
         z = vec2( z.x*z.x - z.y*z.y, fractalPower*z.x*z.y ) + coords;
         
         if (z.x*z.x + z.y*z.y > 5) {

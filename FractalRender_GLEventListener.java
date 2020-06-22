@@ -12,22 +12,27 @@ import java.nio.IntBuffer;
 
 public class FractalRender_GLEventListener implements GLEventListener {
 
-    private FrameBuffer frameBuffer;
-    private Shader      fractalShader;
-    private Shader      drawShader;
-    private QuadMesh    quadFractal;
-    private QuadMesh    quadRender;
+    private int           fractalWidth;
+    private int           fractalHeight;
 
-    private double      startTime;
-    private boolean     updateScreen;
+    private FrameBuffer   frameBuffer;
+    private Shader        fractalShader;
+    private Shader        drawShader;
+    private QuadMesh      quadFractal;
+    private QuadMesh      quadRender;
 
-    private float       zoomLevel;
-    private float[]     fractalOffset;
-    private float[]     oldFractalOffset;
+    private double        startTime;
+    private boolean       updateScreen;
 
-    private float[]     startMousePos;
-    private float[]     endMousePos;
-    private boolean     imageDrag;
+    private float         iterationNum;
+    private float         fractalPower;
+    private float         zoomLevel;
+    private float[]       fractalOffset;
+    private float[]       oldFractalOffset;
+
+    private float[]       startMousePos;
+    private float[]       endMousePos;
+    private boolean       imageDrag;
 
 
     public FractalRender_GLEventListener() {
@@ -37,6 +42,8 @@ public class FractalRender_GLEventListener implements GLEventListener {
 
         startTime = getSeconds();
         updateScreen = true;
+        iterationNum = 500;
+        fractalPower = 2;
         zoomLevel = 1.0f;
         fractalOffset = new float[] {0.5f, 0.5f};
         oldFractalOffset = new float[] {0.5f, 0.5f};
@@ -71,19 +78,16 @@ public class FractalRender_GLEventListener implements GLEventListener {
 
     public void render(GL3 gl) {
 
-        float fractalPower = 2.0f;// + 0.01f * (float) Math.sin(getSeconds() - startTime);
+        frameBuffer.bindFramebuffer(gl);
 
-        if (true) {
-            frameBuffer.bindFramebuffer(gl);
+        fractalShader.use(gl);
+        fractalShader.configureVec3(gl, "zoomInfo", fractalOffset[0], fractalOffset[1], zoomLevel);
+        fractalShader.configureFloat(gl, "fractalPower", fractalPower);
+        fractalShader.configureFloat(gl, "iterationNum", iterationNum);
+        quadFractal.render(gl);
 
-            fractalShader.use(gl);
-            fractalShader.configureVec3(gl, "zoomInfo", fractalOffset[0], fractalOffset[1], zoomLevel);
-            fractalShader.configureFloat(gl, "fractalPower", fractalPower);
-            quadFractal.render(gl);
-    
-            frameBuffer.unBindFramebuffer(gl);
-            updateScreen = false;
-        }
+        frameBuffer.unBindFramebuffer(gl);
+        updateScreen = false;
 
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
@@ -128,5 +132,34 @@ public class FractalRender_GLEventListener implements GLEventListener {
     }
     public double getSeconds() {
         return System.currentTimeMillis()/1000.0;
+    }
+
+    public void setFractalSize(int fractalWidth, int fractalHeight) {
+        this.fractalWidth  = fractalWidth;
+        this.fractalHeight = fractalHeight;
+    }
+
+    public void changeColouring(String fractalColouring) {
+        switch (fractalColouring) {
+            case "Black and White via modulo 2":
+                break;
+            default:
+        }
+    }
+
+    public void setIterationNum(int iterationNum) {
+        this.iterationNum = (float) iterationNum;
+    }
+
+    public void setFractalPower(float fractalPower) {
+        this.fractalPower = fractalPower;
+    }
+
+    public int getIterationNum() {
+        return (int) iterationNum;
+    }
+
+    public float getFractalPower() {
+        return fractalPower;
     }
 }

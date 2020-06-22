@@ -66,7 +66,30 @@ public class FractalRender extends JFrame {
 
         layeredPane.add(fractalOptions);
         layeredPane.add(canvas);
-        getContentPane().add(layeredPane);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(layeredPane, BorderLayout.CENTER);
+
+        getContentPane().addComponentListener(new ComponentAdapter() {
+                public void componentResized(ComponentEvent componentEvent) {
+                        /**
+                         * RESIZE ALL COMPONENTS AS WINDOW RESIZES!!!!!
+                         */
+                        Dimension newSize = componentEvent.getComponent().getBounds().getSize();
+                        int newWidth = (int) newSize.getWidth();
+                        int newHeight = (int) newSize.getHeight();
+
+                        layeredPane.removeAll();
+
+                        glEventListener.setFractalSize(newWidth, newHeight);
+                        canvas.setBounds(0, 0, newWidth, newHeight);
+                        fractalOptions.setBounds(newWidth - 193, 0, 189, 198);
+
+                        layeredPane.add(fractalOptions);
+                        layeredPane.add(canvas);
+                        getContentPane().add(layeredPane, BorderLayout.CENTER);
+                }
+        });
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
                 animator.stop();
@@ -88,7 +111,7 @@ public class FractalRender extends JFrame {
 
         fractalOptions           = new JPanel();
         fractalColourLabel       = new JLabel();
-        fractalColouringComboBox = new JComboBox<>();
+        //fractalColouringComboBox = new JComboBox();
         iterationNumLabel        = new JLabel();
         iterationTextField       = new JTextField();
         iterationSlider          = new JSlider();
@@ -96,28 +119,57 @@ public class FractalRender extends JFrame {
         fractalPowerSlider       = new JSlider();
         fractalPowerLabel        = new JLabel();
         
-        fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)),
-                "Options for rendering fractal", 
-                javax.swing.border.TitledBorder.CENTER, 
-                javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12))); // NOI18N
+        fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Options for rendering fractal",
+                        javax.swing.border.TitledBorder.CENTER, 
+                        javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12)));
+
+        //fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(
+        //        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)),
+        //        "Options for rendering fractal", 
+        //        javax.swing.border.TitledBorder.CENTER, 
+        //        javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12))); // NOI18N
 
         fractalColourLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         fractalColourLabel.setText("Fractal colouring");
 
+        JComboBox fractalColouringComboBox = new JComboBox(new String[] { "Black and White via modulo 2", "Item 2", "Item 3", "Item 4" });
         fractalColouringComboBox.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        fractalColouringComboBox.setModel(
-                new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        fractalColouringComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                        JComboBox comboBox = (JComboBox) e.getSource();
+                        String colouringString = (String) comboBox.getSelectedItem();
+                        glEventListener.changeColouring(colouringString);
+                }
+        });
 
         iterationNumLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         iterationNumLabel.setText("Number of iterations");
 
-        iterationTextField.setText("500");
-
-        fractalPowerTextField.setText("500");
+        iterationTextField.setText(Integer.toString(glEventListener.getIterationNum()));
+        fractalPowerTextField.setText(Float.toString(glEventListener.getFractalPower()));
 
         fractalPowerLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         fractalPowerLabel.setText("Power of fractal");
+
+        iterationSlider = new JSlider(JSlider.HORIZONTAL, 0, 1000, glEventListener.getIterationNum());
+        iterationSlider.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent event) {
+                        int iterationNum = iterationSlider.getValue();
+                        iterationTextField.setText(Integer.toString(iterationNum));
+                        glEventListener.setIterationNum(iterationNum);
+                }
+        });
+        
+        float fractalPowerRange = 10f;
+        int initFractalPowerSliderValue = (int) ( (glEventListener.getFractalPower() + fractalPowerRange) / 2*fractalPowerRange );
+        fractalPowerSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, initFractalPowerSliderValue);
+        fractalPowerSlider.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent event) {
+                        float fractalPower = 20f * fractalPowerSlider.getValue() / 100f - fractalPowerRange;
+                        fractalPowerTextField.setText(Float.toString(fractalPower));
+                        glEventListener.setFractalPower(fractalPower);
+                }
+        });
 
         javax.swing.GroupLayout fractalOptionsLayout = new javax.swing.GroupLayout(fractalOptions);
         fractalOptions.setLayout(fractalOptionsLayout);
@@ -179,7 +231,7 @@ public class FractalRender extends JFrame {
 
     private JPanel fractalOptions;
     private JLabel fractalColourLabel;
-    private JComboBox<String> fractalColouringComboBox;
+    private JComboBox fractalColouringComboBox;
     private JLabel fractalPowerLabel;
     private JSlider fractalPowerSlider;
     private JTextField fractalPowerTextField;
