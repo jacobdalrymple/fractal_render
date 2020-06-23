@@ -75,6 +75,31 @@ public class Shader {
     }
 
     /**
+     * Send vector of 2 floats to shader.
+     * 
+     * @param gl           Opengl object.
+     * @param variableName Name of variable in shader code.
+     * @param f1           Float in posistion 0 of vector (zero index).
+     * @param f2           Float in posistion 1 of vector.
+     */
+    public void configureVec2(GL3 gl, String variableName, float f1, float f2) {
+        int location = gl.glGetUniformLocation(shaderID, variableName);
+        gl.glUniform2f(location, f1, f2);
+    }
+
+    /**
+     * Send vector of 2 floats to shader.
+     * 
+     * @param gl           Opengl object.
+     * @param variableName Name of variable in shader code.
+     * @param vec2         Vector of floats.
+     */
+    public void configureVec2(GL3 gl, String variableName, float[] vec2) {
+        int location = gl.glGetUniformLocation(shaderID, variableName);
+        gl.glUniform2f(location, vec2[0], vec2[1]);
+    }
+
+    /**
     Send vector of 3 floats to shader.
     @param gl           Opengl object.
     @param variableName Name of variable in shader code.

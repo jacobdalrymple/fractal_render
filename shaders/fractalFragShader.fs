@@ -4,6 +4,7 @@ in vec2 st;
 uniform vec3 zoomInfo;
 uniform float fractalPower;
 uniform float iterationNum;
+uniform vec2 aspectScale;
 
 out vec4 fragColor;
 
@@ -11,7 +12,7 @@ void main () {
     vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
 
     vec2 offset = vec2(zoomInfo.x, zoomInfo.y);
-    vec2 coords = (st - vec2(0.5f))*(zoomInfo.z) - offset;
+    vec2 coords = ((st - vec2(0.5f))*(zoomInfo.z) - offset) * aspectScale;
 
     vec2 z = vec2(0.0f);
 

@@ -35,7 +35,7 @@ public class FractalRender extends JFrame {
         super(titleBarText);
         GLCapabilities glCapabilities = new GLCapabilities(GLProfile.get(GLProfile.GL3));
         canvas = new GLCanvas(glCapabilities);
-        glEventListener = new FractalRender_GLEventListener();
+        glEventListener = new FractalRender_GLEventListener(WIDTH, HEIGHT);
         canvas.addGLEventListener(glEventListener);
 
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
@@ -111,7 +111,6 @@ public class FractalRender extends JFrame {
 
         fractalOptions           = new JPanel();
         fractalColourLabel       = new JLabel();
-        //fractalColouringComboBox = new JComboBox();
         iterationNumLabel        = new JLabel();
         iterationTextField       = new JTextField();
         iterationSlider          = new JSlider();
@@ -122,12 +121,6 @@ public class FractalRender extends JFrame {
         fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Options for rendering fractal",
                         javax.swing.border.TitledBorder.CENTER, 
                         javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12)));
-
-        //fractalOptions.setBorder(javax.swing.BorderFactory.createTitledBorder(
-        //        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)),
-        //        "Options for rendering fractal", 
-        //        javax.swing.border.TitledBorder.CENTER, 
-        //        javax.swing.border.TitledBorder.CENTER, new java.awt.Font("Segoe UI", 0, 12))); // NOI18N
 
         fractalColourLabel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         fractalColourLabel.setText("Fractal colouring");

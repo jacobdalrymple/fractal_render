@@ -12,8 +12,12 @@ import java.nio.IntBuffer;
 
 public class FractalRender_GLEventListener implements GLEventListener {
 
+    private int           baseFractalWidth;
+    private int           baseFractalHeight;
     private int           fractalWidth;
     private int           fractalHeight;
+    private float         widthRatio;
+    private float         heightRatio;
 
     private FrameBuffer   frameBuffer;
     private Shader        fractalShader;
@@ -35,22 +39,29 @@ public class FractalRender_GLEventListener implements GLEventListener {
     private boolean       imageDrag;
 
 
-    public FractalRender_GLEventListener() {
-    }
-
-    public void init(GLAutoDrawable drawable) {
+    public FractalRender_GLEventListener(int fractalWidth, int fractalHeight) {
+        this.baseFractalWidth = fractalWidth;
+        this.baseFractalHeight = fractalHeight;
+        this.fractalWidth = fractalWidth;
+        this.fractalHeight = fractalHeight;
+        calculateAspectScale();
 
         startTime = getSeconds();
         updateScreen = true;
         iterationNum = 500;
         fractalPower = 2;
-        zoomLevel = 1.0f;
-        fractalOffset = new float[] {0.5f, 0.5f};
-        oldFractalOffset = new float[] {0.5f, 0.5f};
+        zoomLevel = 4.0f;
+        fractalOffset = new float[] { 0.5f, 0.5f };
+        oldFractalOffset = new float[] { 0.5f, 0.5f };
+    }
+
+    public void init(GLAutoDrawable drawable) {
+
+        calculateAspectScale();
 
         GL3 gl = drawable.getGL().getGL3();
         
-        frameBuffer = new FrameBuffer(gl, FractalRender.WIDTH, FractalRender.HEIGHT);
+        frameBuffer = new FrameBuffer(gl, fractalWidth, fractalHeight);
         fractalShader = new Shader(gl, "./shaders/fractalVertexShader.vs", "./shaders/fractalFragShader.fs");
         drawShader = new Shader(gl, "./shaders/drawVertexShader.vs", "./shaders/drawFragShader.fs");
         quadFractal = new QuadMesh(gl);
@@ -60,8 +71,8 @@ public class FractalRender_GLEventListener implements GLEventListener {
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL3 gl = drawable.getGL().getGL3();
         gl.glViewport(x, y, width, height);
-        updateScreen = true;
-        //redraw fractal texture??
+        fractalWidth = width;
+        fractalHeight = height;
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -84,6 +95,7 @@ public class FractalRender_GLEventListener implements GLEventListener {
         fractalShader.configureVec3(gl, "zoomInfo", fractalOffset[0], fractalOffset[1], zoomLevel);
         fractalShader.configureFloat(gl, "fractalPower", fractalPower);
         fractalShader.configureFloat(gl, "iterationNum", iterationNum);
+        fractalShader.configureVec2(gl, "aspectScale", widthRatio, heightRatio);
         quadFractal.render(gl);
 
         frameBuffer.unBindFramebuffer(gl);
@@ -128,8 +140,10 @@ public class FractalRender_GLEventListener implements GLEventListener {
     public void zoomIn() {
         zoomLevel *= 0.9f;
         updateScreen = true;
+        System.out.println(Float.toString(zoomLevel));
  
     }
+
     public double getSeconds() {
         return System.currentTimeMillis()/1000.0;
     }
@@ -161,5 +175,10 @@ public class FractalRender_GLEventListener implements GLEventListener {
 
     public float getFractalPower() {
         return fractalPower;
+    }
+
+    public void calculateAspectScale() {
+        widthRatio = (float) fractalWidth / (float) baseFractalWidth;
+        heightRatio = (float) fractalHeight / (float) baseFractalHeight;
     }
 }
