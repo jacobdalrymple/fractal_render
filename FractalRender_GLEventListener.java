@@ -140,8 +140,6 @@ public class FractalRender_GLEventListener implements GLEventListener {
     public void zoomIn() {
         zoomLevel *= 0.9f;
         updateScreen = true;
-        System.out.println(Float.toString(zoomLevel));
- 
     }
 
     public double getSeconds() {
