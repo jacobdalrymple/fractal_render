@@ -54,7 +54,9 @@ public class FractalRender extends JFrame {
 
         fractalShaders = new String[][] {
             new String[] {"Black & White Mandlebrot set", "./src/main/resources/shaders/fractal_frag_shaders/b&w_mandlebrot_set.fs"},
-            new String[] {"Red Mandlebrot set",           "./src/main/resources/shaders/fractal_frag_shaders/red_mandlebrot_set.fs"}
+            new String[] {"Red Mandlebrot set",           "./src/main/resources/shaders/fractal_frag_shaders/red_mandlebrot_set.fs"},
+            new String[] {"Black & White Julia set",      "./src/main/resources/shaders/fractal_frag_shaders/b&w_julia_set.fs"},
+            new String[] {"Red Julia set",                "./src/main/resources/shaders/fractal_frag_shaders/red_julia_set.fs"}
         }; 
 
         glEventListener = new FractalRender_GLEventListener(fractalShaders[0][1], WIDTH, HEIGHT);

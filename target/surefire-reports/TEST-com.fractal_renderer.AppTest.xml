@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="com.fractal_renderer.AppTest" time="0.015" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="com.fractal_renderer.AppTest" time="0.016" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="13.0.2+8"/>
@@ -60,5 +60,5 @@
     <property name="sun.stdout.encoding" value="cp850"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.fractal_renderer.AppTest" name="shouldAnswerWithTrue" time="0.015"/>
+  <testcase classname="com.fractal_renderer.AppTest" name="shouldAnswerWithTrue" time="0.016"/>
 </testsuite>
