@@ -40,8 +40,19 @@ public class FractalRender_GLEventListener implements GLEventListener {
     private float[]       endMousePos;
     private boolean       imageDrag;
 
+    private String        fractalVertShaderPath;
+    private String        fractalFragShaderPath;
+    private String        outputVertShaderPath;
+    private String        outputFragShaderPath;
+
+    private Boolean       fractalFragShaderUpdated;
+
 
     public FractalRender_GLEventListener(int fractalWidth, int fractalHeight) {
+        this("./src/main/resources/shaders/fractal_frag_shaders/b&w_mandlebrot_set.fs", fractalWidth, fractalHeight);
+    }
+
+    public FractalRender_GLEventListener(String fractalFragShaderPath, int fractalWidth, int fractalHeight) {
         this.baseFractalWidth = fractalWidth;
         this.baseFractalHeight = fractalHeight;
         this.fractalWidth = fractalWidth;
@@ -55,19 +66,19 @@ public class FractalRender_GLEventListener implements GLEventListener {
         zoomLevel = 4.0f;
         fractalOffset = new float[] { 0.5f, 0.5f };
         oldFractalOffset = new float[] { 0.5f, 0.5f };
+
+        fractalVertShaderPath = "./src/main/resources/shaders/fractalVertexShader.vs";
+        this.fractalFragShaderPath = fractalFragShaderPath;
+        outputVertShaderPath  = "./src/main/resources/shaders/drawVertexShader.vs"; 
+        outputFragShaderPath  = "./src/main/resources/shaders/drawFragShader.fs"; 
+
+        fractalFragShaderUpdated = false;
     }
 
     public void init(GLAutoDrawable drawable) {
-
         calculateAspectScale();
-
         GL3 gl = drawable.getGL().getGL3();
-        
-        frameBuffer = new FrameBuffer(gl, fractalWidth, fractalHeight);
-        fractalShader = new Shader(gl, "./src/main/resources/shaders/fractalVertexShader.vs", "./src/main/resources/shaders/fractalFragShader.fs");
-        drawShader = new Shader(gl, "./src/main/resources/shaders/drawVertexShader.vs", "./src/main/resources/shaders/drawFragShader.fs");
-        quadFractal = new QuadMesh(gl);
-        quadRender = new QuadMesh(gl);
+        createGLObjects(gl);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -91,6 +102,11 @@ public class FractalRender_GLEventListener implements GLEventListener {
 
     public void render(GL3 gl) {
 
+        if (fractalFragShaderUpdated) {
+            createGLObjects(gl);
+            fractalFragShaderUpdated = false;
+        }
+
         frameBuffer.bindFramebuffer(gl);
 
         fractalShader.use(gl);
@@ -108,6 +124,14 @@ public class FractalRender_GLEventListener implements GLEventListener {
         drawShader.use(gl);
         gl.glBindTexture(GL.GL_TEXTURE_2D, frameBuffer.getTextureId());
         quadRender.render(gl);
+    }
+
+    private void createGLObjects(GL3 gl) {
+        frameBuffer = new FrameBuffer(gl, fractalWidth, fractalHeight);
+        fractalShader = new Shader(gl, fractalVertShaderPath, fractalFragShaderPath);
+        drawShader = new Shader(gl, outputVertShaderPath, outputFragShaderPath);
+        quadFractal = new QuadMesh(gl);
+        quadRender = new QuadMesh(gl);
     }
 
     public void drag(int mX, int mY) {
@@ -153,12 +177,9 @@ public class FractalRender_GLEventListener implements GLEventListener {
         this.fractalHeight = fractalHeight;
     }
 
-    public void changeColouring(String fractalColouring) {
-        switch (fractalColouring) {
-            case "Black and White via modulo 2":
-                break;
-            default:
-        }
+    public void setFractalFragShader(String fractalFragShaderPath) {
+        this.fractalFragShaderPath = fractalFragShaderPath;
+        fractalFragShaderUpdated = true;
     }
 
     public void setIterationNum(int iterationNum) {

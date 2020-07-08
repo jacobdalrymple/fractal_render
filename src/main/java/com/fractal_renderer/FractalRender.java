@@ -47,11 +47,18 @@ public class FractalRender extends JFrame {
     private int fractalSliderMinValue;
     private int fractalSliderMaxValue;
 
+    private String[][] fractalShaders;
+
     public FractalRender(String titleBarText) {
         super(titleBarText);
 
-        glEventListener = new FractalRender_GLEventListener(WIDTH, HEIGHT);
-        
+        fractalShaders = new String[][] {
+            new String[] {"Black & White Mandlebrot set", "./src/main/resources/shaders/fractal_frag_shaders/b&w_mandlebrot_set.fs"},
+            new String[] {"Red Mandlebrot set",           "./src/main/resources/shaders/fractal_frag_shaders/red_mandlebrot_set.fs"}
+        }; 
+
+        glEventListener = new FractalRender_GLEventListener(fractalShaders[0][1], WIDTH, HEIGHT);
+
         // initialising the GUI components
         guiInitialisation();
         // configure layout all the GUI components
@@ -81,8 +88,7 @@ public class FractalRender extends JFrame {
         fractalColourLabel.setFont(new Font("Segoe UI", 0, 11));
         fractalColourLabel.setText("Fractal colouring");
 
-        fractalColouringComboBox = new JComboBox(
-                new String[] { "Black and White via modulo 2", "Item 2", "Item 3", "Item 4" });
+        fractalColouringComboBox = new JComboBox(getColumn(fractalShaders, 0));
         fractalColouringComboBox.setFont(new Font("Segoe UI", 0, 11));
 
         iterationNumLabel = new JLabel();
@@ -107,13 +113,13 @@ public class FractalRender extends JFrame {
         fractalPowerRange = 10f;
         fractalSliderMinValue = 0;
         fractalSliderMaxValue = 100;
-        int fractalSliderAvg = (int) 0.5 * (fractalSliderMinValue + fractalSliderMaxValue);
         fractalPowerSlider = new SliderGUI(JSlider.HORIZONTAL, fractalSliderMinValue, fractalSliderMaxValue,
-                fractalSliderAvg);
+                fractalSliderMaxValue);
         fractalPowerSlider.setTrueToSliderValFunc(
                 (float trueValue) -> (int) ((trueValue + fractalPowerRange) / 2 * fractalPowerRange));
         fractalPowerSlider.setSliderToTrueValFunc((int sliderValue) -> 2 * fractalPowerRange * sliderValue
                 / (float) (fractalSliderMaxValue - fractalSliderMinValue) - fractalPowerRange);
+        fractalPowerSlider.setSliderPosition(glEventListener.getFractalPower());
     }
 
     /**
@@ -211,8 +217,8 @@ public class FractalRender extends JFrame {
         fractalColouringComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JComboBox comboBox = (JComboBox) e.getSource();
-                String colouringString = (String) comboBox.getSelectedItem();
-                glEventListener.changeColouring(colouringString);
+                String fractalShaderName = (String) comboBox.getSelectedItem();
+                glEventListener.setFractalFragShader(getFractalShaderPath(fractalShaderName));
             }
         });
 
@@ -312,6 +318,24 @@ public class FractalRender extends JFrame {
                 System.exit(0);
             }
         });
+    }
+
+    private String[] getColumn(String[][] stringArray, int indexToReturn) {
+        String[] stringColumn = new String[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            stringColumn[i] = stringArray[i][indexToReturn];
+        }
+        return stringColumn;
+    }
+
+    private String getFractalShaderPath(String fractalShaderName) {
+        for (int i = 0; i < fractalShaders.length; i++) {
+            if (fractalShaders[i][0] == fractalShaderName) {
+                return fractalShaders[i][1];
+            }
+        }
+        System.out.println("ERROR : Fractal shader name is not paired with a corresponding path.");
+        return fractalShaders[0][1];
     }
 
     public static void main(String[] args) {
