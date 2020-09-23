@@ -1,3 +1,7 @@
+## Screenshots
+
+<img src="./images/fractal_example_1.png" width="382" height="347"> <img src="./images/fractal_example_2.png" width="382" height="347">
+
 # Fractal Renderer
 
 This project aims to use Java with the Jogl library to render fractals, maven was also used to manage the project.
@@ -17,8 +21,3 @@ Click and drag mouse to pan over fractal.
 "A" key to zoom in.
 
 "Z" key to zoom out.
-
-## Screenshots
-
-<img src="./images/fractal_example_1.png" width="382" height="347">
-<img src="./images/fractal_example_2.png" width="382" height="347">
